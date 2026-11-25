@@ -1,0 +1,21 @@
+{
+  "appId": "no.samm.letgo",
+  "appName": "Let Go",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#10240f",
+    "scheme": "App",
+    "scrollEnabled": false,
+    "allowsLinkPreview": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "launchShowDuration": 0,
+      "backgroundColor": "#10240f",
+      "showSpinner": false
+    },
+    "StatusBar": { "overlaysWebView": true, "style": "DARK" }
+  }
+}

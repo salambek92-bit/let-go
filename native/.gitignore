@@ -1,0 +1,12 @@
+node_modules/
+www/
+ios/App/App/public/
+ios/App/build/
+ios/DerivedData/
+ios/App/Pods/
+build/
+*.p8
+*.p12
+*.mobileprovision
+*.ipa
+__pycache__/

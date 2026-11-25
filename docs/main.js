@@ -1,14 +1,17 @@
 import { createSim, step, release, vineAngle, difficulty } from './sim.js';
 import * as A from './art.js';
+import { boot, haptic, isNative, nativeShare, PUBLIC_URL, noteGameOver, adDue, showDueAd, isShowingAd } from './native.js';
 
 const cv = document.getElementById('c'); const c = cv.getContext('2d');
-const W = 390; let H = 844, k = 1, layers = null;
+const W = 390; let H = 844, k = 1, layers = null, ST = 0; // ST = top safe-area inset in game units
 const DT = 1 / 240;
 const store = { get best() { return +(localStorage.getItem('letgo.best') || 0); }, set best(v) { localStorage.setItem('letgo.best', v); } };
 
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, 3);
   const cw = window.innerWidth, ch = window.innerHeight;
+  const sp = document.getElementById('safe'); const inset = sp ? sp.getBoundingClientRect().height : 0;
+  ST = Math.max(0, inset * W / cw - 20);
   H = Math.max(600, Math.round(W * ch / cw));
   k = (cw / W) * dpr;
   cv.width = Math.round(cw * dpr); cv.height = Math.round(H * k);
@@ -58,9 +61,10 @@ menuSim();
 
 // ---------- input ----------
 function tap(x, y) {
+  if (isShowingAd()) return;
   for (const b of buttons) if (x > b.x && x < b.x + b.w && y > b.y && y < b.y + b.h) { b.fn(); return; }
   if (state === 'play') {
-    if (release(sim)) { beep('release'); }
+    if (release(sim)) { beep('release'); haptic('release'); }
   } else if (state === 'paused') state = 'play';
   else if (state === 'over' && dieT > 1.1) retry();
   else if (state === 'handoff') { newRun(versus.seed); }
@@ -88,7 +92,7 @@ function update(dt) {
       }
     }
     for (const ev of sim.events.splice(0)) {
-      if (ev === 'snap') { beep('snap'); burst(sim.p.x, sim.p.y - 20, 14, 'fiber'); flash = 0.25; }
+      if (ev === 'snap') { beep('snap'); haptic('snap'); burst(sim.p.x, sim.p.y - 20, 14, 'fiber'); flash = 0.25; }
       if (ev === 'dead') onDead();
     }
   }
@@ -96,6 +100,8 @@ function update(dt) {
     dieT += dt;
     // sink toward the croc
     sim.p.y += 40 * dt; if (dieT > 0.9 && state === 'dying') toOver();
+    // interstitial: only on the game-over screen, before retry is possible (retry opens at dieT > 1.1)
+    if (state === 'over' && dieT > 0.7 && dieT < 1.1 && adDue()) showDueAd();
   }
   // trail
   if (state === 'play' && sim.mode === 'fly') trail.push({ x: sim.p.x, y: sim.p.y + 30, t: time });
@@ -109,17 +115,18 @@ function update(dt) {
   for (const p of parts) { p.vy += 500 * dt * (p.kind === 'leaf' ? 0.25 : 1); p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt; }
   flash = Math.max(0, flash - dt);
 }
-function onGrab() { beep('grab'); burst(sim.p.x, sim.p.y, 7, 'leaf'); trail = []; }
+function onGrab() { beep('grab'); haptic('grab'); burst(sim.p.x, sim.p.y, 7, 'leaf'); trail = []; }
 function onDead() {
   beep('splash'); state = 'dying'; dieT = 0;
   burst(sim.p.x, sim.waterY, 18, 'drop');
   // nearest croc lunges
   let best = crocs[0]; for (const cr of crocs) if (Math.abs(cr.x - sim.p.x) < Math.abs(best.x - sim.p.x)) best = cr; best.lunge = { from: best.x, t: time };
-  if (navigator.vibrate) navigator.vibrate(60);
+  haptic('dead');
 }
 function toOver() {
   state = 'over';
-  if (sim.score > store.best) { newBest = sim.score > 0; store.best = sim.score; if (newBest) beep('best'); }
+  if (sim.score > store.best) { newBest = sim.score > 0; store.best = sim.score; if (newBest) { beep('best'); haptic('best'); } }
+  noteGameOver();
   if (mode === 'versus') { versus.scores.push(sim.score); if (versus.scores.length < 2) state = 'handoff'; }
 }
 function burst(x, y, n, kind) {
@@ -239,7 +246,7 @@ function button(label, x, y, w, h, fn, style = 'gold') {
   buttons.push({ x, y, w, h, fn });
 }
 function pauseIcon() {
-  const x = W - 42, y = 50;
+  const x = W - 42, y = 50 + ST;
   c.fillStyle = 'rgba(10,28,12,0.55)'; c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 1.5;
   c.beginPath(); c.arc(x, y, 23, 0, 7); c.fill(); c.stroke();
   c.fillStyle = '#fff'; c.beginPath(); c.roundRect(x - 8, y - 10, 5.5, 20, 2); c.roundRect(x + 2.5, y - 10, 5.5, 20, 2); c.fill();
@@ -257,18 +264,18 @@ function drawUI() {
   const best = store.best;
   if (state === 'menu') {
     c.fillStyle = 'rgba(10,25,10,0.18)'; c.fillRect(0, 0, W, H);
-    txt('LET GO', W / 2, H * 0.14, 86, '#fff', { stroke: '#2a4a18', sw: 14, shadowColor: '#f39a2b', sy: 6 });
-    txt('Tap to let go of the vine.', W / 2, H * 0.14 + 62, 19, '#fff6e0', { weight: 800 });
-    txt('Catch the next one — or feed the crocs.', W / 2, H * 0.14 + 88, 17, '#fff6e0', { weight: 800 });
+    txt('LET GO', W / 2, H * 0.14 + ST * 0.5, 86, '#fff', { stroke: '#2a4a18', sw: 14, shadowColor: '#f39a2b', sy: 6 });
+    txt('Tap to let go of the vine.', W / 2, H * 0.14 + ST * 0.5 + 62, 19, '#fff6e0', { weight: 800 });
+    txt('Catch the next one — or feed the crocs.', W / 2, H * 0.14 + ST * 0.5 + 88, 17, '#fff6e0', { weight: 800 });
     button('SOLO RUN', 60, H * 0.6, W - 120, 62, startSolo, 'gold');
     button('PASS THE PHONE', 60, H * 0.6 + 80, W - 120, 62, startVersus, 'cream');
     txt(best ? `BEST ${best}` : 'No best yet — the river is patient', W / 2, H - 70, 18, '#fff', { weight: 800 });
     return;
   }
   // score
-  txt(String(sim.score), W / 2, 78, 96, '#fff', { shadowColor: 'rgba(20,30,10,0.45)', sy: 5 });
-  txt(`BEST ${Math.max(best, state === 'play' ? 0 : 0)}`, W / 2, 140, 26, '#fff', { weight: 800, shadowColor: 'rgba(20,30,10,0.5)', sy: 2 });
-  if (mode === 'versus' && versus) txt(`PLAYER ${versus.scores.length + (state === 'over' ? 0 : 1)}`, 64, 50, 15, '#ffe2a0', { weight: 900 });
+  txt(String(sim.score), W / 2, 78 + ST, 96, '#fff', { shadowColor: 'rgba(20,30,10,0.45)', sy: 5 });
+  txt(`BEST ${Math.max(best, state === 'play' ? 0 : 0)}`, W / 2, 140 + ST, 26, '#fff', { weight: 800, shadowColor: 'rgba(20,30,10,0.5)', sy: 2 });
+  if (mode === 'versus' && versus) txt(`PLAYER ${versus.scores.length + (state === 'over' ? 0 : 1)}`, 64, 50 + ST, 15, '#ffe2a0', { weight: 900 });
   pauseIcon();
   if (state === 'play' && sim.score < 2 && sim.t < 9) {
     txt(sim.score === 0 ? 'Tap to let go on the forward swing' : 'Hands must hit the lower half', W / 2, H * 0.6, 19, '#fff', { weight: 800, shadowColor: 'rgba(0,0,0,.55)' });
@@ -317,7 +324,7 @@ function toMenu() { state = 'menu'; mode = 'solo'; versus = null; menuSim(); }
 async function share() {
   const n = sim.score;
   const text = `I made it ${n} ${n === 1 ? 'vine' : 'vines'} in LET GO before the crocs got me. Beat that 🐊🌴`;
-  const url = location.href.split('?')[0];
+  const url = isNative ? PUBLIC_URL : location.href.split('?')[0];
   try {
     const sc = document.createElement('canvas'); sc.width = 1080; sc.height = 1350; const s = sc.getContext('2d');
     s.drawImage(cv, 0, 0, cv.width, cv.width * 1.25, 0, 0, 1080, 1350);
@@ -329,12 +336,14 @@ async function share() {
     s.font = `800 44px ${A.FONT}`; s.fillText(url.replace(/^https?:\/\//, ''), 540, 1250);
     const blob = await new Promise(r => sc.toBlob(r, 'image/png'));
     const file = new File([blob], 'let-go.png', { type: 'image/png' });
+    if (isNative) return await nativeShare(text + ' ' + url, blob);
     if (navigator.canShare && navigator.canShare({ files: [file] })) return await navigator.share({ files: [file], text, url });
     if (navigator.share) return await navigator.share({ text, url });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'let-go.png'; a.click();
   } catch (e) { try { await navigator.clipboard.writeText(text + ' ' + url); } catch (_) {} }
 }
 
+boot();
 let last = performance.now();
 function frame(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now; update(dt); draw(); requestAnimationFrame(frame); }
 requestAnimationFrame(frame);
