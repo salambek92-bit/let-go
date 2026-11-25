@@ -29,7 +29,7 @@ export async function nativeShare(text, blob) {
     const fs = P('Filesystem');
     if (blob && fs) {
       const data = await new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(String(fr.result).split(',')[1]); fr.readAsDataURL(blob); });
-      const w = await fs.writeFile({ path: 'let-go.png', data, directory: 'CACHE' });
+      const w = await fs.writeFile({ path: 'jungle-drop.png', data, directory: 'CACHE' });
       files = [w.uri];
     }
     await s.share(files ? { text, files } : { text, url: PUBLIC_URL });

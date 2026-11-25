@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""App Store Connect helper for Let Go (runs in CI with the ASC API key from env; never prints secrets).
+"""App Store Connect helper for Jungle Drop (runs in CI with the ASC API key from env; never prints secrets).
   check  -> writes exists=true/false to $GITHUB_OUTPUT (is there an app record for the bundle id?)
   apply  -> fills metadata, category, age rating and screenshots for the editable version.
 It NEVER creates a review submission."""

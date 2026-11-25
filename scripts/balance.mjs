@@ -45,7 +45,7 @@ function run(seed, jitterMs, maxVines = 80) {
 
 const bots = [['perfect', 0], ['pro (20ms)', 20], ['good (40ms)', 40], ['casual (70ms)', 70], ['sloppy (110ms)', 110]];
 const N = 60;
-console.log('Let Go balance — ' + N + ' seeded runs per bot\n');
+console.log('Jungle Drop balance — ' + N + ' seeded runs per bot\n');
 const allW = [];
 for (const [name, j] of bots) {
   const scores = [];

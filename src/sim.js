@@ -1,4 +1,4 @@
-// Let Go — pure game simulation (no rendering). Shared by the game and the balance bots.
+// Jungle Drop — pure game simulation (no rendering). Shared by the game and the balance bots.
 export const W = 390;
 export const G = 1800;           // gravity px/s^2
 export const TARGET_AMP = 1.2;   // auto-swing amplitude (rad, ~69deg)

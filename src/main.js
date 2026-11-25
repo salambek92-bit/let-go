@@ -264,9 +264,11 @@ function drawUI() {
   const best = store.best;
   if (state === 'menu') {
     c.fillStyle = 'rgba(10,25,10,0.18)'; c.fillRect(0, 0, W, H);
-    txt('LET GO', W / 2, H * 0.14 + ST * 0.5, 86, '#fff', { stroke: '#2a4a18', sw: 14, shadowColor: '#f39a2b', sy: 6 });
-    txt('Tap to let go of the vine.', W / 2, H * 0.14 + ST * 0.5 + 62, 19, '#fff6e0', { weight: 800 });
-    txt('Catch the next one — or feed the crocs.', W / 2, H * 0.14 + ST * 0.5 + 88, 17, '#fff6e0', { weight: 800 });
+    const ty = H * 0.11 + ST * 0.5;
+    txt('JUNGLE', W / 2, ty, 68, '#fff', { stroke: '#2a4a18', sw: 12, shadowColor: '#f39a2b', sy: 5 });
+    txt('DROP', W / 2, ty + 62, 68, '#fff', { stroke: '#2a4a18', sw: 12, shadowColor: '#f39a2b', sy: 5 });
+    txt('Tap to let go of the vine.', W / 2, ty + 62 + 46, 19, '#fff6e0', { weight: 800 });
+    txt('Catch the next one — or feed the crocs.', W / 2, ty + 62 + 72, 17, '#fff6e0', { weight: 800 });
     button('SOLO RUN', 60, H * 0.6, W - 120, 62, startSolo, 'gold');
     button('PASS THE PHONE', 60, H * 0.6 + 80, W - 120, 62, startVersus, 'cream');
     txt(best ? `BEST ${best}` : 'No best yet — the river is patient', W / 2, H - 70, 18, '#fff', { weight: 800 });
@@ -323,23 +325,23 @@ function toMenu() { state = 'menu'; mode = 'solo'; versus = null; menuSim(); }
 
 async function share() {
   const n = sim.score;
-  const text = `I made it ${n} ${n === 1 ? 'vine' : 'vines'} in LET GO before the crocs got me. Beat that 🐊🌴`;
+  const text = `I made it ${n} ${n === 1 ? 'vine' : 'vines'} in JUNGLE DROP before the crocs got me. Beat that 🐊🌴`;
   const url = isNative ? PUBLIC_URL : location.href.split('?')[0];
   try {
     const sc = document.createElement('canvas'); sc.width = 1080; sc.height = 1350; const s = sc.getContext('2d');
     s.drawImage(cv, 0, 0, cv.width, cv.width * 1.25, 0, 0, 1080, 1350);
     s.fillStyle = 'rgba(8,20,10,0.55)'; s.fillRect(0, 0, 1080, 1350);
-    s.textAlign = 'center'; s.fillStyle = '#fff'; s.font = `900 120px ${A.FONT}`; s.fillText('LET GO', 540, 230);
+    s.textAlign = 'center'; s.fillStyle = '#fff'; s.font = `900 120px ${A.FONT}`; s.fillText('JUNGLE DROP', 540, 230);
     s.font = `800 64px ${A.FONT}`; s.fillText('I made it', 540, 520);
     s.fillStyle = '#ffd36b'; s.font = `900 330px ${A.FONT}`; s.fillText(String(n), 540, 860);
     s.fillStyle = '#fff'; s.font = `800 72px ${A.FONT}`; s.fillText(n === 1 ? 'vine' : 'vines', 540, 980);
     s.font = `800 44px ${A.FONT}`; s.fillText(url.replace(/^https?:\/\//, ''), 540, 1250);
     const blob = await new Promise(r => sc.toBlob(r, 'image/png'));
-    const file = new File([blob], 'let-go.png', { type: 'image/png' });
+    const file = new File([blob], 'jungle-drop.png', { type: 'image/png' });
     if (isNative) return await nativeShare(text + ' ' + url, blob);
     if (navigator.canShare && navigator.canShare({ files: [file] })) return await navigator.share({ files: [file], text, url });
     if (navigator.share) return await navigator.share({ text, url });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'let-go.png'; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'jungle-drop.png'; a.click();
   } catch (e) { try { await navigator.clipboard.writeText(text + ' ' + url); } catch (_) {} }
 }
 

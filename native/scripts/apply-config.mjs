@@ -11,7 +11,7 @@ const add = `
 	<key>GADApplicationIdentifier</key>
 	<string>${ADS.appId}</string>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>Your choice is used only to show you more relevant ads between games. Let Go itself collects no data.</string>
+	<string>Your choice is used only to show you more relevant ads between games. Jungle Drop itself collects no data.</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 ${SKAN.map((s) => `		<dict><key>SKAdNetworkIdentifier</key><string>${s}.skadnetwork</string></dict>`).join('\n')}

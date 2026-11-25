@@ -1,4 +1,4 @@
-// Let Go — all art drawn in code (crisp at any DPR).
+// Jungle Drop — all art drawn in code (crisp at any DPR).
 export const FONT = '"SF Pro Rounded","Arial Rounded MT Bold",ui-rounded,"Nunito","Baloo 2","Trebuchet MS",system-ui,sans-serif';
 
 export function mulberry(a) { return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
