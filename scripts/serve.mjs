@@ -5,4 +5,4 @@ http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]); if (p.endsWith('/')) p += 'index.html';
   const f = path.join(root, p); if (!f.startsWith(root) || !fs.existsSync(f)) { res.writeHead(404); return res.end('not found'); }
   res.writeHead(200, { 'content-type': types[path.extname(f)] || 'application/octet-stream', 'cache-control': 'no-cache' }); fs.createReadStream(f).pipe(res);
-}).listen(port, () => console.log(`Jungle Drop on http://localhost:${port}`));
+}).listen(port, () => console.log(`Swing Rage on http://localhost:${port}`));

@@ -1,11 +1,11 @@
 {
   "bundleId": "no.samm.letgo",
   "locale": "en-US",
-  "name": "Jungle Drop",
-  "nameFallback": "Jungle Drop: Vine Rage",
+  "name": "Swing Rage",
+  "nameFallback": "Swing Rage",
   "subtitle": "One tap. Swing. Don't fall.",
   "promotionalText": "One tap. That's all you get. Let go of the vine at the perfect moment, catch the next one, and don't feed the crocs. How far can you swing?",
-  "description": "One tap. That's all. Don't look down.\n\nJungle Drop is a one-tap jungle game that is easy to learn and brutally hard to master. You hang from a swinging vine. Tap to let go. If your hands hit the next vine, you grab it. If they don't, the crocodiles say thank you.\n\nThere is no aiming and no second button. Just timing.\n\n• ONE TAP – tap to release, catch the next vine automatically.\n• VINES SNAP – hang too long and the vine frays and breaks. No waiting for the perfect swing.\n• THE RIVER RISES – the crocodiles are always closer than you think.\n• GETS HARD FAST – around vine 20 it turns into pure rage. One more try. Always one more try.\n• PASS THE PHONE – two players, the exact same jungle, one phone. Most vines wins.\n• INSTANT RETRY – dead to swinging again in one tap.\n• SHARE YOUR SCORE – brag with a score card when you beat your best.\n• PLAYS OFFLINE – no account, no sign-in, no internet needed to play.\n\nHow many vines can you make it?",
+  "description": "One tap. That's all. Don't look down.\n\nSwing Rage is a one-tap jungle game that is easy to learn and brutally hard to master. You hang from a swinging vine. Tap to let go. If your hands hit the next vine, you grab it. If they don't, the crocodiles say thank you.\n\nThere is no aiming and no second button. Just timing.\n\n• ONE TAP – tap to release, catch the next vine automatically.\n• VINES SNAP – hang too long and the vine frays and breaks. No waiting for the perfect swing.\n• THE RIVER RISES – the crocodiles are always closer than you think.\n• GETS HARD FAST – around vine 20 it turns into pure rage. One more try. Always one more try.\n• PASS THE PHONE – two players, the exact same jungle, one phone. Most vines wins.\n• INSTANT RETRY – dead to swinging again in one tap.\n• SHARE YOUR SCORE – brag with a score card when you beat your best.\n• PLAYS OFFLINE – no account, no sign-in, no internet needed to play.\n\nHow many vines can you make it?",
   "keywords": "jungle,swing,vine,rope,one tap,arcade,hard,rage,crocodile,reflex,endless,casual,timing,jump,monkey",
   "supportUrl": "https://salambek92-bit.github.io/let-go/support.html",
   "marketingUrl": "https://salambek92-bit.github.io/let-go/",
@@ -54,5 +54,5 @@
       "6.5-4-gameover.png"
     ]
   },
-  "reviewNotes": "Jungle Drop is a one-tap game: tap anywhere to let go of the vine; your hands grab the next vine automatically if they touch it. No login. The game runs fully offline (bundled HTML5 canvas, no remote content). Ads: one Google AdMob interstitial after every third game over, only on the game-over screen, never during play. Consent: Google UMP consent form (EEA) and Apple ATT prompt at first launch. No in-app purchases."
+  "reviewNotes": "Swing Rage is a one-tap game: tap anywhere to let go of the vine; your hands grab the next vine automatically if they touch it. No login. The game runs fully offline (bundled HTML5 canvas, no remote content). Ads: one Google AdMob interstitial after every third game over, only on the game-over screen, never during play. Consent: Google UMP consent form (EEA) and Apple ATT prompt at first launch. No in-app purchases."
 }

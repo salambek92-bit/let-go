@@ -1,6 +1,6 @@
-# Jungle Drop — iOS app (Capacitor)
+# Swing Rage — iOS app (Capacitor)
 
-- Bundle ID `no.samm.letgo`, display name **Jungle Drop**. iPhone only, portrait, full screen, status bar hidden.
+- Bundle ID `no.samm.letgo`, display name **Swing Rage**. iPhone only, portrait, full screen, status bar hidden.
 - The game (`../src`) is copied into `www/` and bundled in the app, so it runs fully offline. No remote URL is loaded.
 - Native: haptics (grab, release, snap, fall, new best), native share sheet for the score card, local best score.
 - Ads: Google AdMob interstitial after every 3rd game over, shown only on the game-over screen (never mid-swing),

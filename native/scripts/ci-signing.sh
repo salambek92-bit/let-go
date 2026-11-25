@@ -9,7 +9,7 @@ id_of() { app-store-connect bundle-ids list --bundle-id-identifier "$BUNDLE_ID" 
 BID="$(id_of || true)"
 if [ -z "$BID" ]; then
   echo "Registering Bundle ID $BUNDLE_ID"
-  app-store-connect bundle-ids create "$BUNDLE_ID" --name "Jungle Drop" --platform IOS
+  app-store-connect bundle-ids create "$BUNDLE_ID" --name "Swing Rage" --platform IOS
   BID="$(id_of)"
 fi
 echo "Bundle ID resource: $BID"

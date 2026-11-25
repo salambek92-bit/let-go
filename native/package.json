@@ -2,7 +2,7 @@
   "name": "let-go-ios",
   "version": "1.0.0",
   "private": true,
-  "description": "Jungle Drop iOS app: Capacitor shell with the game bundled offline (www is copied from ../src). AdMob interstitial every 3rd game over.",
+  "description": "Swing Rage iOS app: Capacitor shell with the game bundled offline (www is copied from ../src). AdMob interstitial every 3rd game over.",
   "scripts": {
     "web": "node scripts/copy-web.mjs",
     "config": "node scripts/apply-config.mjs",
