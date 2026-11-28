@@ -38,7 +38,8 @@
     "advertising": true,
     "parentalControls": false,
     "ageAssurance": false,
-    "healthOrWellnessTopics": false
+    "healthOrWellnessTopics": false,
+    "socialMedia": false
   },
   "screenshots": {
     "APP_IPHONE_67": [

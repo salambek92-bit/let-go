@@ -65,18 +65,33 @@ def apply():
         else: call('POST', '/v1/appInfoLocalizations', {'data': {'type': 'appInfoLocalizations', 'attributes': {'locale': loc, **attrs}, 'relationships': {'appInfo': {'data': {'type': 'appInfos', 'id': iid}}}}})
     step('name/subtitle/privacy URL', app_info_loc)
     def categories():
-        rel = {k: {'data': {'type': 'appCategories', 'id': META[k]}} for k in ('primaryCategory', 'primarySubcategoryOne', 'primarySubcategoryTwo', 'secondaryCategory') if META.get(k)}
-        call('PATCH', f'/v1/appInfos/{iid}', {'data': {'type': 'appInfos', 'id': iid, 'relationships': rel}})
+        # Subcategories are only valid once the primary category is GAMES.
+        # Setting both in one PATCH fails with RELATIONSHIP.INVALID if primary was not already GAMES.
+        def rel(*keys):
+            return {k: {'data': {'type': 'appCategories', 'id': META[k]}} for k in keys if META.get(k)}
+        parents = rel('primaryCategory', 'secondaryCategory')
+        if parents:
+            call('PATCH', f'/v1/appInfos/{iid}', {'data': {'type': 'appInfos', 'id': iid, 'relationships': parents}})
+        subs = rel('primarySubcategoryOne', 'primarySubcategoryTwo', 'secondarySubcategoryOne', 'secondarySubcategoryTwo')
+        if subs:
+            call('PATCH', f'/v1/appInfos/{iid}', {'data': {'type': 'appInfos', 'id': iid, 'relationships': subs}})
     step('categories', categories)
     def age():
+        import re
         r = call('GET', f'/v1/appInfos/{iid}/ageRatingDeclaration')['data']
         attrs = dict(META['ageRating'])
+        def patch(a):
+            call('PATCH', f"/v1/ageRatingDeclarations/{r['id']}", {'data': {'type': 'ageRatingDeclarations', 'id': r['id'], 'attributes': a}})
         try:
-            call('PATCH', f"/v1/ageRatingDeclarations/{r['id']}", {'data': {'type': 'ageRatingDeclarations', 'id': r['id'], 'attributes': attrs}})
-        except RuntimeError as e:  # older/newer schema: retry with only the fields Apple returned
-            known = set(r.get('attributes', {}).keys())
-            attrs = {k: v for k, v in attrs.items() if k in known}
-            call('PATCH', f"/v1/ageRatingDeclarations/{r['id']}", {'data': {'type': 'ageRatingDeclarations', 'id': r['id'], 'attributes': attrs}})
+            patch(attrs)
+        except RuntimeError as e:
+            msg = str(e)
+            m = re.search(r"attribute '([A-Za-z]+)'", msg)
+            if m and m.group(1) not in attrs:
+                attrs[m.group(1)] = False
+                patch(attrs)
+            else:
+                raise
     step('age rating', age)
     step('content rights', lambda: call('PATCH', f'/v1/apps/{aid}', {'data': {'type': 'apps', 'id': aid, 'attributes': {'contentRightsDeclaration': META['contentRightsDeclaration']}}}))
 
